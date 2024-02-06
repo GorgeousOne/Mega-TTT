@@ -17,6 +17,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	ofNoFill();
 	float width	= ofGetWidth();
 	float height = ofGetHeight();
 
@@ -35,67 +36,55 @@ void ofApp::draw(){
  * @param size half size of 3x3 board
  */
 void ofApp::drawBoard(ofPoint center, float size) {
+	funIndex = 0;
 	float t = ofGetElapsedTimef();
+
 	ofBackground(127+50*sin(t*0.01),127+30*cos(t*0.04),127-40*sin(t*0.03));
 	ofSetColor(255);
-	ofSetLineWidth(1);
+	ofSetLineWidth(5);
 
 	float tileSize = size / 3;
 
-	ofPolyline line1;
-	ofPolyline line2;
-	ofPolyline line3;
-	ofPolyline line4;
-	//draw lines of the tiles
-
-	ofPoint pt;
 	ofTranslate(center);
-
 	//top to bottom lines
-	pt.set(tileSize, -size);
-	line1.addVertex(pt);
-	pt.set(tileSize, size);
-	line1.addVertex(pt);
 
-	pt.set(-tileSize, -size);
-	line2.addVertex(pt);
-	pt.set(-tileSize, size);
-	line2.addVertex(pt);
+	ofPoint fun1 = fun();
+	ofPoint fun2 = fun();
+	ofPoint fun3 = fun();
+	ofPoint fun4 = fun();
+	ofPoint fun5 = fun();
+	ofPoint fun6 = fun();
+	ofPoint fun7 = fun();
+	ofPoint fun8 = fun();
 
-	//left to right lines
-	pt.set(-size, tileSize);
-	line3.addVertex(pt);
-	pt.set(size, tileSize);
-	line3.addVertex(pt);
+	
+	ofDrawLine(-size + fun1.x, -tileSize + fun1.y, size + fun2.x, -tileSize + fun2.y);
+	ofDrawLine(-size + fun3.x, tileSize + fun3.y, size + fun4.x, tileSize + fun4.y);
 
-	pt.set(-size, -tileSize);
-	line4.addVertex(pt);
-	pt.set(size, -tileSize);
-	line4.addVertex(pt);
-
-	line1.draw();
-	line2.draw();
-	line3.draw();
-	line4.draw();
-
+	ofDrawLine(-tileSize + fun5.x, -size + fun5.y, -tileSize + fun6.x, size + fun6.y);
+	ofDrawLine(tileSize + fun7.x, -size + fun7.y, tileSize + fun8.x, size + fun8.y);
+	
 
 	//draw the game markers
 	for (int x = 0; x < 3; x++) {
 		for (int y = 0; y < 3; y++) {
 			int marker = gameState.getMarker(x, y);
-			float dx = (x - 1) * tileSize * 2;
-			float dy = (y - 1) * tileSize * 2;
+			fun1 = fun();
+			
+			float dx = (x - 1) * tileSize * 2 + fun1.x;
+			float dy = (y - 1) * tileSize * 2 + fun1.y;
 
 			switch (marker) {
 				case 1:
 					ofSetColor(0,255,0);
-					ofSetCircleResolution(20);
-					ofDrawCircle(dx, dy, tileSize);
+					ofSetCircleResolution(50);
+					ofDrawCircle(dx, dy, tileSize * 0.7);
 					break;
 				case 2:
 					ofSetColor(0,0,255);
-					ofSetCircleResolution(4);
-					ofDrawCircle(dx, dy, tileSize);
+					// ofSetCircleResolution(4);
+					ofDrawRectangle(dx - tileSize * 0.6, dy - tileSize * 0.6, tileSize * 1.2, tileSize * 1.2);
+					// ofDrawCircle(dx, dy, tileSize * 0.8);
 					break;
 				default:
 					break;
@@ -104,6 +93,28 @@ void ofApp::drawBoard(ofPoint center, float size) {
 		}
 	}
 	ofTranslate(-center);
+}
+
+
+ofPoint ofApp::fun() {
+	float amplitude = 2;
+	float frequency = 10;
+
+	if (funAngles.size() <= funIndex) {
+		funAngles.push_back(ofRandom(0, 2 * PI));
+		funSeeds.push_back(ofRandom(0, 100));
+	}
+	float t = ofGetElapsedTimef();
+	float seed = funSeeds[funIndex];
+	funAngles[funIndex] += ofSignedNoise(0.1 * t + seed) * 0.1;
+
+	float motion = sin(frequency * t + seed * 0.1) * amplitude;
+	float angle = funAngles[funIndex];
+	float x = motion * cos(angle);
+	float y = motion * sin(angle);
+
+	funIndex++;
+	return ofPoint(x, y);
 }
 
 //--------------------------------------------------------------

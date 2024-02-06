@@ -27,6 +27,8 @@ public:
 	void drawBoard(ofPoint center, float size);
 	std::tuple<int, int> getClickedTile(int x, int y);
 
+	ofPoint fun();
+
 	GameState gameState{};
 	int pressedX = -1;
 	int pressedY = -1;
@@ -36,4 +38,9 @@ public:
 
 	int playerTurn = 1;
 	std::string debugInfo = "";
+
+	std::vector<float> funAngles;
+	std::vector<float> funSeeds;
+	int funIndex = 0;
+
 };
