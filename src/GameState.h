@@ -13,7 +13,7 @@ public:
             }
         }
     }
-    void setMarker(int x, int y, int marker);
+    bool setMarker(int x, int y, int marker);
     int getMarker(int x, int y);
     int evaluateGame();
 };

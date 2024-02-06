@@ -34,6 +34,6 @@ public:
 	float boardSize;
 	ofPoint boardCenter;
 
-	bool isPlayer1Turn = true;
+	int playerTurn = 1;
 	std::string debugInfo = "";
 };

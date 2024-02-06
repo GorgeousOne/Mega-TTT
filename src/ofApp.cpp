@@ -35,6 +35,8 @@ void ofApp::draw(){
  * @param size half size of 3x3 board
  */
 void ofApp::drawBoard(ofPoint center, float size) {
+	float t = ofGetElapsedTimef();
+	ofBackground(127+50*sin(t*0.01),127+30*cos(t*0.04),127-40*sin(t*0.03));
 	ofSetColor(255);
 	ofSetLineWidth(1);
 
@@ -81,13 +83,19 @@ void ofApp::drawBoard(ofPoint center, float size) {
 	for (int x = 0; x < 3; x++) {
 		for (int y = 0; y < 3; y++) {
 			int marker = gameState.getMarker(x, y);
+			float dx = (x - 1) * tileSize * 2;
+			float dy = (y - 1) * tileSize * 2;
 
 			switch (marker) {
 				case 1:
-					//draw X
+					ofSetColor(0,255,0);
+					ofSetCircleResolution(20);
+					ofDrawCircle(dx, dy, tileSize);
 					break;
 				case 2:
-					//draw O
+					ofSetColor(0,0,255);
+					ofSetCircleResolution(4);
+					ofDrawCircle(dx, dy, tileSize);
 					break;
 				default:
 					break;
@@ -125,8 +133,14 @@ void ofApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
 	auto [tileX, tileY] = getClickedTile(x, y);
-	debugInfo = "Tile clicked: " + std::to_string(tileX) + ", " + std::to_string(tileY);
-	ofBackground(255,0,0);
+	bool wasMoveSuccesful = gameState.setMarker(tileX,tileY,playerTurn);
+
+	if (wasMoveSuccesful) {
+		if (gameState.evaluateGame() != 0) {
+			debugInfo = "Player " + std::to_string(playerTurn) + " wins!";
+		}
+		playerTurn = (playerTurn == 1) ? 2 : 1;
+	}
 }
 
 /**
@@ -152,7 +166,7 @@ std::tuple<int, int> ofApp::getClickedTile(int x, int y) {
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	ofBackground(0);
+
 }
 
 //--------------------------------------------------------------
